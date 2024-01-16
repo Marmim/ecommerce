@@ -1,0 +1,75 @@
+﻿@model IEnumerable<ecommerce.Models.Panier>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<section id="breadcrumbs" class="breadcrumbs">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 style="color: #003166"> Cart</h2>
+            
+        </div>
+
+    </div>
+</section>
+
+<div class="container">
+
+    <table class="table" style=" border-collapse: collapse;
+            width: 100%">
+        <thead>
+            <tr>
+                <th class="fw-bold" style="color:#0056b2">
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th class="fw-bold" style="color:#0056b2">
+                    @Html.DisplayNameFor(model => model.Quantite)
+                </th>
+                <th class="fw-bold" style="color:#0056b2">
+                    @Html.DisplayNameFor(model => model.ProduitId)
+                </th>
+                <th class="fw-bold" style="color:#0056b2">
+                    @Html.DisplayNameFor(model => model.Produit.Price)
+                </th>
+                <th class="fw-bold" style="color:#0056b2">
+                    @Html.DisplayNameFor(model => model.Produit.PhotoUrl)
+                </th>
+             
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantite)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Produit.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Produit.PhotoUrl)
+                    </td>
+                
+
+                    <td class="d-flex justify-content-between">
+
+                        
+                        <a asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash" title="Delete"></i></a>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+</div>
+
+</table>
+<br>
+<br />
+
