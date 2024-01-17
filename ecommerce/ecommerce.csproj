@@ -40,6 +40,7 @@
     <Content Remove="wwwroot\assets\img\Fidarek %281%29.png" />
     <Content Remove="wwwroot\assets\img\FiDarek.png" />
     <Content Remove="wwwroot\assets\img\portfolio\portfolio-1.jpg" />
+    <Content Remove="wwwroot\assets\js\Panier.js" />
   </ItemGroup>
 
   <ItemGroup>

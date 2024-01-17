@@ -23,8 +23,15 @@ namespace ecommerce.Controllers
         public async Task<IActionResult> Index()
         {
             List<Produit> l = new List<Produit>();
-            
-            Console.WriteLine("\n\ncookies"+HttpContext.Request.Cookies["panier"]);
+            try { 
+            string[] panier = HttpContext.Request.Cookies["panier"].Split('-');
+
+            for(int i=0;i<panier.Length;i++)
+            {
+                l.Add(await _context.Produit
+                .FirstOrDefaultAsync(m => m.id == Int32.Parse(panier[i])));
+            }
+
 
             /*var produit = await _context.Produit.FindAsync(id);
             if (produit == null)
@@ -32,9 +39,12 @@ namespace ecommerce.Controllers
                 return NotFound();
             }
             Console.WriteLine(produit.Categorie);*/
-            return _context.Panier != null ? 
-                          View(await _context.Panier.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Panier'  is null.");
+            return View(l);
+            }
+            catch(Exception ex)
+            {
+                return View(l);
+            }
         }
 
         // GET:

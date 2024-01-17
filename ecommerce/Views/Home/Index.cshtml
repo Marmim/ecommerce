@@ -3,6 +3,14 @@
 @{
     ViewData["Title"] = "Home Page";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    try
+    {
+        ViewData["panier"] = Context.Request.Cookies["panier"].Split('-').ToList();
+    }
+    catch(Exception e)
+    {
+        ViewData["panier"] = new List<string>();
+    }
 
 }   <!-- ======= Hero Section ======= -->
 <section id="hero" class="d-flex align-items-center">
@@ -31,8 +39,8 @@
         <div class="row">
             <div class="col-lg-12 d-flex justify-content-center">
                 <ul id="portfolio-flters">
-                    <li data-filter="*" class="filter-active">All</li>
-                    <li data-filter=".filter-beauty">Beauté</li>
+                    <li data-filter="*" class="filter-active">Tous</li>
+                    <li data-filter=".filter-beauté">Beauté</li>
                     <li data-filter=".filter-vetement">Vetement Femme</li>
                     <li data-filter=".filter-chaussure">chaussure Femme</li>
                 </ul>
@@ -45,22 +53,26 @@
             @foreach (var item in Model) {
             <div class="col-lg-4 col-md-6 portfolio-item filter-@item.Categorie"> 
                 <div class="thumbnail-container">
+                   
                         <img src="@item.PhotoUrl" class ="img-fluid" alt="">
                         <div class="product-image">
-                            <h4>@Html.DisplayFor(modelItem => item.Description)</h4>
+                            <br>
+                            <h4 style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size:14px">@Html.DisplayFor(modelItem => item.Description)</h4>
                             <div  class="product-price-and-shipping">
-                            <p> @Html.DisplayFor(modelItem => item.Price) DH</p>
+                                <p style="font-family:'Arial Rounded MT';color: darkorange"> @Html.DisplayFor(modelItem => item.Price) DH</p>
                             </div>
                         </div>
                             
                             <div class="portfolio-links">
                                 <a href="@item.PhotoUrl" data-gallery="portfolioGallery" class="portfolio-lightbox" title="photo"> </a>
-                                <form asp-controller="Paniers" asp-action="Create">
-                                @Html.AntiForgeryToken()
-                                    <input type="hidden" name="ProduitId" class="form-control" value="@item.id" />
-                                <input type="hidden" name="Quantite" class="form-control" value="1" />
-                                    <button type="submit" value="Create" class="btn btn-outline-primary"><i class="bi bi-cart3"></i> Add to cart</button>
-                                </form>
+                            @if (((List<string>)ViewData["panier"]).Contains(item.id.ToString())){
+
+                                    <button onClick = "ajouterPanier(this)" class="btn btn-outline-danger"><i class="bi bi-cart3"></i> Annuler du panier<input  type="hidden" value="@item.id"/></button>
+
+                                    }
+                            else{
+                                <button onClick="ajouterPanier(this)" class="btn btn-outline-primary"><i class="bi bi-cart3"></i> Ajouter au panier<input  type="hidden" value="@item.id"/></button>
+                            }
                          
                         </div>
 
@@ -71,30 +83,43 @@
 
 
             }
-            @*ajouter produit au panier
+            @*ajouter produit au panier*@
             <script>
                 function ajouterPanier(e) {
-                @* Obtient la valeur du premier élément input dans l'élément fourni*
-                    var id = e.getElementsByTagName("input")[0].value;
-                    @* Initialise un tableau vide pour le panier  
+                // Obtient la valeur du premier élément input dans l'élément fourni
+                    var id = e.getElementsByTagName("input")[0].value; 
+                // Initialise un tableau vide pour le panier  *
                     var panier = Array();
-                @*  S'il existe des cookies, divise le cookie 'panier' et le convertit en tableau
+                //  S'il existe des cookies, divise le cookie 'panier' et le convertit en tableau
                        
-                    if (document.cookie.length>0)
-                        panier = document.cookie.split('=')[1].split(',');
+                    if (document.cookie.length > "panier=".length)
+                        panier = document.cookie.split('=')[1].split('-');
                   // Ajoute l'ID de l'article au tableau du panier 
-              
-                    panier.push(id);
+                    
 
-                  Convertit le tableau du panier en une chaîne séparée par des virgules
-                    panier = panier.join(',');
+                    if (e.className.includes("primary")) { 
+                        panier.push(id);
+                        e.className = "btn btn-outline-danger";
+                        e.innerHTML = e.innerHTML.replace("Ajouter au panier","Annuler du panier");
+                    }
+                    else {
 
-                Définitle cookie 'panier' avec la valeur mise à jour, ainsi qu'une date d'expiration et un chemin
-                    document.cookie = `panier=${panier}; expires=Wed, 18 Dec 2030 12:00:00 UTC; path=/`
+                        panier.splice(panier.indexOf(id), 1);
+                        e.className = "btn btn-outline-primary";
+                        e.innerHTML = e.innerHTML.replace("Annuler du panier","Ajouter au panier");
+                    }
+
+                    console.log(panier);
+                    document.getElementById("cart-count").innerHTML = panier.length;
+                 // Convertit le tableau du panier en une chaîne séparée par des virgules
+                    panier = panier.join('-');
+
+                //Définitle cookie 'panier' avec la valeur mise à jour, ainsi qu'une date d'expiration et un chemin
+                    document.cookie = `panier=${panier}; expires=Wed, 18 Dec 2030 12:00:00 UTC; path=/`;
                     
                 }
                     </script>
-           *@
+           
 
         </div>
 
